@@ -1,6 +1,6 @@
 ### 自定义一个 Classloader，加载一个 Hello.xlass 文件，执行 hello 方法，此文件内 容是一个 Hello.class 文件所有字节（x=255-x）处理后的文件。文件群里提供。
 
-![图片](https://uploader.shimo.im/f/0Ywytk8EUIKXYN5H.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)
+![图片](https://uploader.shimo.im/f/FjjFHjf2x1BG3zQC.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)
 
 ```java
 package homework;
@@ -8,7 +8,16 @@ public interface Decoder {
     byte[] decode(byte[] origin);
 }
 ```
-
+```java
+package homework;
+public class NoneDecoder implements Decoder {
+    @Override
+    public byte[] decode(byte[] origin) {
+        // do nothing
+        return origin;
+    }
+}
+```
 ```java
 package homework;
 public class ComplementDecoder implements Decoder {
@@ -23,7 +32,6 @@ public class ComplementDecoder implements Decoder {
     }
 }
 ```
-
 ```java
 package homework;
 import java.io.IOException;
@@ -63,7 +71,6 @@ public class FileClassLoader extends ClassLoader {
     }
 }
 ```
-
 ```java
 package homework;
 import java.lang.reflect.Method;
@@ -85,17 +92,14 @@ private static void invoke(String methodName,
     method.invoke(instance);
 }
 ```
-
 ### 编译&运行
 
 ```plain
-javac -d .  Decoder.java ComplementDecoder.java FileClassLoader.java Main.java
+javac -d .  Decoder.java ComplementDecoder.java NoneDecoder.java FileClassLoader.java Main.java
 # 运行
 java homework.Main
 ```
-
 ## 
-
 ## 3、画一张图，展示 Xmx、Xms、Xmn、Meta、DirectMemory、Xss 这些内存参数的 关系。
 
 ![图片](https://uploader.shimo.im/f/fpzzHQ3wpqAVtN3b.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)

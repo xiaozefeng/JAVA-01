@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 public class FileClassLoader extends ClassLoader {
 
     private final String filepath;
-    private Decoder decoder;
+    private Decoder decoder = new NoneDecoder();
 
 
     public FileClassLoader(String filepath) {
@@ -25,16 +25,9 @@ public class FileClassLoader extends ClassLoader {
         return decoder.decode(origin);
     }
 
-    public boolean hasDecoder(){
-        return decoder != null;
-    }
-
-
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        byte[] bytes = (getBytes(filepath));
-        if (hasDecoder())
-            bytes = decode(bytes);
+        byte[] bytes = decode(getBytes(filepath));
         if (bytes == null)
             throw new ClassNotFoundException();
         return defineClass(name, bytes, 0, bytes.length);
