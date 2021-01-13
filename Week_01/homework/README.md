@@ -1,4 +1,4 @@
-### 自定义一个 Classloader，加载一个 Hello.xlass 文件，执行 hello 方法，此文件内 容是一个 Hello.class 文件所有字节（x=255-x）处理后的文件。文件群里提供。
+### 第二题: 自定义一个 Classloader，加载一个 Hello.xlass 文件，执行 hello 方法，此文件内 容是一个 Hello.class 文件所有字节（x=255-x）处理后的文件。文件群里提供。
 
 ![图片](https://uploader.shimo.im/f/FjjFHjf2x1BG3zQC.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)
 
@@ -104,9 +104,10 @@ java homework.Main
 
 ![图片](https://uploader.shimo.im/f/fpzzHQ3wpqAVtN3b.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)
 
-xmx:  包括整个堆内存,  xms, xmn, metaspace 都属于堆
+xmx: 包括整个堆内存,  xms, xmn, metaspace 都属于堆
 
 DirectMemory 属于堆外内存, 跟堆无关
 
-Xss 影响的是线程栈的大小限制，跟堆无关
+Xss 影响的是线程栈的大小限制，跟堆无关,
+xss 和xmx 没有关系， 跟操作系统可用内存有关系，如果硬说 xmx 和xss的关系， xmx越大那么xss的可用就越小,  xmx 固定的情况下，xss设置的越小， 可用线程数就越多 (直到达到操作系统的限制)  公式:   (OS可用内存 -  xmx) / xss 
 

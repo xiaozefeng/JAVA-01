@@ -5,7 +5,7 @@ Java 的跨平台是 二进制跨平台的， 也就是说编译成 class或者j
 
 ## 字节码
 
-java bytecode 是由单字节 (byte) 的指令组成，理论上可以支持 256 (byte长度为8  2的8次幂=256)  个操作码 ( opcode)
+Java bytecode 是由单字节 (byte) 的指令组成，理论上可以支持 256 (byte长度为8  2的8次幂=256)  个操作码 ( opcode)
 
 ### 字节码生成与查看
 
@@ -282,7 +282,11 @@ java -XX:+PrintFlagsFinal -version | grep HeapSize
 
 4. 画出 Xmx, Xms, Xmn , MetaSpace, DirectMemory, Xss 的关系
 
-![图片](https://uploader.shimo.im/f/we8xJoN8ow7umZQK.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+![图片](https://uploader.shimo.im/f/7O6OFOvJh728s9ny.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+
+* Xmx 包含 xmn
+* xss 和xmx 没有关系， 跟操作系统可用内存有关系，如果硬说 xmx 和xss的关系， xmx越大那么xss的可用就越小,  xmx 固定的情况下，xss设置的越小， 可用线程数就越多 (直到达到操作系统的限制)**公式:   (OS可用内存 -  xmx) / xss**
+* DirectMemory 只和 操作系统内存大小相关
 
 ### GC 设置参数
 
