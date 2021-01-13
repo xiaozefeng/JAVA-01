@@ -1,11 +1,12 @@
 ### 1、自己写一个简单的 Hello.java，里面需要涉及基本类型，四则运行，if 和 for，然后自己分析一下对应的字节码
 
-[https://github.com/JAVA-01/JAVA-01/tree/main/Week_01/homework/subject_one](https://github.com/JAVA-01/JAVA-01/tree/main/Week_01/homework/subject_one)
+[https://github.com/xiaozefeng/JAVA-01/tree/main/Week_01/homework/subject_one](https://github.com/xiaozefeng/JAVA-01/tree/main/Week_01/homework/subject_one)
 
 
 ### 2、 自定义一个 Classloader，加载一个 Hello.xlass 文件，执行 hello 方法，此文件内 容是一个 Hello.class 文件所有字节（x=255-x）处理后的文件。文件群里提供。
 
-[https://github.com/JAVA-01/JAVA-01/tree/main/Week_01/homework/subject_two](https://github.com/JAVA-01/JAVA-01/tree/main/Week_01/homework/subject_two)
+
+[https://github.com/xiaozefeng/JAVA-01/tree/main/Week_01/homework/subject_two](https://github.com/xiaozefeng/JAVA-01/tree/main/Week_01/homework/subject_two)
 
 ![图片](https://uploader.shimo.im/f/FjjFHjf2x1BG3zQC.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)
 
