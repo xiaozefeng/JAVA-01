@@ -5,7 +5,6 @@
 
 ### 2、 自定义一个 Classloader，加载一个 Hello.xlass 文件，执行 hello 方法，此文件内 容是一个 Hello.class 文件所有字节（x=255-x）处理后的文件。文件群里提供。
 
-
 [https://github.com/xiaozefeng/JAVA-01/tree/main/Week_01/homework/subject_two](https://github.com/xiaozefeng/JAVA-01/tree/main/Week_01/homework/subject_two)
 
 ![图片](https://uploader.shimo.im/f/FjjFHjf2x1BG3zQC.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)
@@ -119,4 +118,40 @@ java homework.Main
 * xss 和xmx 没有关系， 跟操作系统可用内存有关系，如果硬说 xmx 和xss的关系， xmx越大那么xss的可用就越小,  xmx 固定的情况下，xss设置的越小， 可用线程数就越多 (直到达到操作系统的限制)**公式:   (OS可用内存 -  xmx) / xss**
 #### 
 ### 4、本机使用 G1 GC 启动一个程序，仿照课上案例分析一下 JVM 情况。可以使用 gateway-server-0.0.1-SNAPSHOT.jar 注意关闭自适应参数:-XX:-UseAdaptiveSizePolicy
+
+```shell
+# SerialGC
+java -Xmx1g -Xms1g -XX:-UseAdaptiveSizePolicy -XX:+UseSerialGC  gateway-server-0.0.1-SNAPSHOT.jar
+# ParallelGC
+java -Xmx1g -Xms1g -XX:-UseAdaptiveSizePolicy -XX:+UseParallelGC gateway-server-0.0.1-SNAPSHOT.jar
+# ConcMarkSweepGC
+java -Xmx1g -Xms1g -XX:-UseAdaptiveSizePolicy -XX:+UseConcMarkSweepGC gateway-server-0.0.1-SNAPSHOT.jar
+# G1GC
+java -Xmx1g -Xms1g -XX:-UseAdaptiveSizePolicy -XX:+UseG1GC gateway-server-0.0.1-SNAPSHOT.jar
+```
+#### GC情况
+
+**SerialGC & ParallelGC & CMS**
+
+一启动就是2次FGC
+
+**G1GC**
+
+启动后没有发生FGC
+
+压测后 eden  , s0 , s1 交替变化, YGC 一直增长， FGC没动
+
+#### Heap 情况
+
+young区占用总堆内存的  1/3
+
+old区占用总堆内存的  2/3
+
+young区的
+
+eden :  s0 : s1 是  8 :1 :  1的关系 (capacity）
+
+jmap -histo $pid
+
+压测时:   byte[] , int[], char[] 一直在增长
 
