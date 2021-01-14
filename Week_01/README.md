@@ -310,5 +310,283 @@ java -XX:+PrintCommandLineFlags -version
 Agent 是 JVM 中的一项黑科技, 可以通过无侵入方式来做很多事情，比如注入 AOP 代码，执行统 计等等，权限非常大。
 
 
+## Java 命令行工具 &GUI工具
+
+#### jps & jinfo
+
+`jps`是列出 Java 进程，可以拿到`pid`
+
+`jinfo`根据`pid`可以查看 Java 进程的`flags`,`command_line``system_properties`等信息
+
+```shell
+# jps
+jps -l 
+jps -mlv
+# jinfo
+jinfo -flags $pid
+jinfo -sysprops $pid
+jinfo $pid 
+```
+#### jstat
+
+>jstat - Monitors Java Virtual Machine (JVM) statistics.   JVM 监控统计工具
+```plain
+jstat -options
+//
+-class 
+-compiler 
+-gc # GC统计信息, Byte
+-gccapacity
+-gccause
+-gcmetacapacity
+-gcnew
+-gcnewcapacity
+-gcold
+-gcoldcapacity
+-gcutil  # GC统计信息，百分比
+-printcompilation
+//
+# 每 10000(interval) ms 统计一次，统计 1000(count) 次
+jstat -gcutil $pid 10000 1000
+jstat -gc $pid 10000 1000
+ S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT
+  0.00  46.86  47.62   2.02  95.19  92.25      1    0.037     1    0.177    0.215
+S0: Survivor 0 
+S1: Survivor 1
+E : Eden
+O: Old Generation
+M: Metaspace
+CCS: Compressed Class Space
+YGC:  Young GC
+YGCT:  YoungGC Time
+FGC: FullGC
+FGCT: FullGCTime
+```
+#### jmap
+
+>jmap - Prints shard object memory maps or heap memory details for a process .  JVM堆内存分析工具
+
+常用命令
+
+```shell
+# 打印内存情况
+jmap -heap $pid 
+# 打印对象统计情况
+jmap -histo $pid 
+# dump 堆内存
+jmap -dump:format=b,file=xxx.hprof
+```
+#### jstatck
+
+>jstack - Prints Java thread stack traces for a Java process.  Java线程分析工具
+
+常用命令
+
+```shell
+# 输出线程相关的 lock 信息
+jstack $pid -l 
+```
+#### jcmd
+
+>jcmd - Sends diagnostic command requests to a running Java Virtual Machine (JVM)
+>可以说jcmd是 jstat, jstack ,jmap 的整合命令
+```shell
+# 相当于 jps 
+jcmd -l 
+# 相当于是 jinfo 
+jcmd $pid VM.version
+jcmd $pid VM.flags
+jcmd $pid VM.command_line
+jcmd $pid VM.system_properties 
+jcmd $pid Thread.print  # 相当于 jstack
+jcmd $pid GC.class_histogram # 相当于 jmap -histo $pid
+jcmd $pid GC.heap_info # 输出类似 jmap -heap $pid 的内容
+```
+### 图形化工具
+
+#### jconsole & jmc & visualvm
+
+jmc 和 visualvm 都单独安装比较靠谱， 不受版本限制
+
+VisualGC 作为 IDEA 插件
+
+
+## GC
+
+**存在的意义?**
+
+内存有限，所有程序要一起用，需要有人对内存进行管理， 让使用内存这件事更高效。
+
+**如何标记一个对象存活？**
+
+引用计数，当一个对象被引用时，计数+1 ，减少一个引用时 -1， 当没有被引用时可以被回收，但是可能存在**循环依赖的问题，比如A引用B ，B也引用A，那么A，B的引用一直不能为0，一直不会被回收 。**
+
+**如何解决引用计数的问题呢？**
+
+可达性分析算法, 从 "GC Root“ 对象作为起点，从这些节点向下搜索，节点走过的路径称之为引用链，当一个对象到 GC Root没有任何引用链，说明此对象不可用。
+
+**哪些算是GC ROO 对象？**
+
+* ****当前正在执行方法的参数和局部变量
+* 活动线程
+* 类的静态字段
+* JNI引用
+### GC 算法
+
+**分代假设:**
+
+设想大部分对象都是瞬时对象， 而那么存活长时间的对象， 可能存活更长时间。
+
+基于此，将 heap 分为 young区 和 old区
+
+young 存放新生对象，当对象存活时间够长了就移动到 old 区
+
+**Mark-Sweep：**标记-清理
+
+标记不需要被回收的对象，标记完成后统计回收没有被标记的对象
+
+**优点:**简单，直接
+
+**缺点:**会产生大量不连续的空间碎片
+
+**Mark-Copy :**标记-复制
+
+分为两块内存，A，B
+
+假设对A进行清理，标记A区域的存活对象，复制到B区域，然后清空 A区域
+
+**young区采用的都是mark-copy算法，因为young区大多是 瞬时对象，存活对象很少，使用mark-copy 算法，只需要很少的代价就可以完成 YGC。**
+
+**优点:**内存连续, 当存活对象很少时，只需要很小的代价就可以完成一次YGC
+
+**缺点:**需要一块额外的内存块
+
+**Mark-Sweep-Compact：**标记-整理
+
+标记不需要被回收的对象， 将其移动到一端，再清除另一端的内存。
+
+**优点:**内存连续, 不需要额外空间
+
+**缺点:**消耗更多的时间
+
+**总结:**
+
+**young区采用 Mark-Copy 算法，因为大部分是瞬时对象， 只许要花很小的代价就可以完成一个 YGC。**
+
+**老年采用 Mark-Sweep / Mark-Sweep-Compact, 因为old区对象是长期存活对象， 如果采用 Mark-Copy ，可能没有那么多空间（或者说浪费空间) ，还有一个原因是 在 young区gc的时间，如果对象放不下了，会转移到 old 区（分配担保机制），如果old也采用 Mark-Copy算法的话，谁来给 old区担保呢？**
+
+### GC过程
+
+**YGC**
+
+young 区分为  eden , s0,s1， 新生对象首先分配到 eden 区， eden区满了触发 ygc, 此时将eden存活的对象放入 s0 , s0和s1 交换， 下次 eden 再次满了之后，再次触发一次 ygc, 此时将eden存活的对象和 s0存活的对象，放入s1 ,再次交换 s0 和s1
+
+如此反复 ygc， 当存活的对象达到一定的阈值 (MaxTenuringThreshold) ，对象将会移动到 old区， 或者对象在 s1 放不下了 ，也会转移到 old区 （分配担保机制）
+
+**FGC**
+
+对整个堆触发垃圾收集 ， 触发FGC 会触发一次 YGC
+
+
+#### 运行中的程序对象之间的关系一直在变化，如何标记？
+
+STW ： Stop The World
+
+### SerialGC &ParNewGC & ParallelGC  & CMS & G1
+
+#### SerialGC:
+
+**-XX:+UseSerialGC**
+
+**young区: mark-copy**
+
+**old区: mark-sweep-compact**
+
+**ygc 和 fgc 都会触发 STW**
+
+**优点:**CPU利用率高， 适合客户端程序
+
+**缺点 :**只能利用单核, 而且不用在大内存上用，想想一个线程清理几十G，上百G 需要多少时间
+
+#### ParNewGC
+
+-XX:+UseParNew 一般搭配 CMS 使用 ,  -XX:+UseConcMarkSweep
+
+基于SerialGC 改良而成， 只用于 Young 区 , 除了可以利用**多核特性**，其他跟 SerialGC 一样
+
+#### ParallelGC
+
+JDK 8 默认 GC策略
+
+ygc 和 fgc 都会触发 STW
+
+young区采用 mark-copy ， old 区采用 mark-sweep-compact
+
+-XX:ParallelGCThreads=Number 指定GC 线程数， 默认为CPU的核心数
+
+在GC 期间，所有CPU核心都用来做辣鸡清理，比起SerialGC 只能利用单个CPU核心，ParallelGC总体暂停更少。
+
+#### CMS
+
+-XX:+UseConcMarkSweepGC
+
+young取采用 mark-copy ， old区采用 mark-sweep, 不进行压缩， 使用 free-list 来标记空闲的空间。
+
+CMS 设计的目标是避免在GC的时候出现**长时间**的卡顿，通过
+
+1. 不对old区进行 compact， 使用 free-list 来管理内存空间的回收
+2. mark-sweep 的多数阶段和 业务线程并发执行
+
+**CMS GC 阶段**
+
+* **Initial Mark****# STW  ：**标记所有跟对象，以及被跟对象直接引用的对象， 以及被young 区所有存活对象引用的对象
+* **Concurrent Mark  # 从 initail-mark中的对象找起，标记所有存活对象**
+* **Concrrent Preclean # 标记在此过程中对象关系变化的地方**
+* **Final Mark****# STW**
+* **Concurrent Clean**
+* **Concurrent Reset**
+
+**优点: 最少延迟**
+
+**缺点:  内存碎片化, 在某些情况下可能造成不可预测的停顿，特别是内存较大的情况 (目前默认是G1，完全可以替代CMS）**
+
+#### G1
+
+-XX:+UseG1GC  -XX:MaxGCPauseMillis=50
+
+G1: Garbage-First， 垃圾优先
+
+G1 设计的目标: 将STW时间和分布，变成可预期和可配置的。
+
+为了达到整个目标:
+
+* G1不在分 young区和old区，而是分为 一个一个的 region, 每个region 可以是 Eden ，Survivor， Old。逻辑上 所有 eded + survivor 就是young 区， 所有old 就是 old区
+* G1 会优先清理 垃圾最多的 region
+
+G1 会通过运行情况不断调整GC策略， 以此控制暂停时间。JVM刚启动的时候没有收到什么信息，此时处于 fully-young模式，当Eden满了之后，STW， 将存活对象转移( Evacuation)到 Suivivor。
+
+### GC组合
+
+Serial 实现单线程低延迟
+
+ParNew + CMS  实现多线程低延迟组合
+
+Parallel 实现多线程高吞吐量
+
+
+### 如何选择合适的GC策略？
+
+**指导原则**
+
+1. 吞吐优先 使用 ParallelGC
+2. 低延迟 使用 CMS
+3. 系统内存较大，GC时间希望可控 使用 G1 （4G以上为较大)
+#### 各个版本默认GC
+
+jdk8 默认为  ParallelGC
+
+Jdk9+  默认为 G1
+
+
 
 
