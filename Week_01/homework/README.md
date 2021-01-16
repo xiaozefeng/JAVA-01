@@ -117,7 +117,31 @@ java homework.Main
 * Xss 影响的是线程栈的大小限制，跟堆无关
 * xss 和xmx 没有关系， 跟操作系统可用内存有关系，如果硬说 xmx 和xss的关系， xmx越大那么xss的可用就越小,  xmx 固定的情况下，xss设置的越小， 可用线程数就越多 (直到达到操作系统的限制)**公式:   (OS可用内存 -  xmx) / xss**
 #### 
-### 4、本机使用 G1 GC 启动一个程序，仿照课上案例分析一下 JVM 情况。可以使用 gateway-server-0.0.1-SNAPSHOT.jar 注意关闭自适应参数:-XX:-UseAdaptiveSizePolicy
+### **4.（选做）**检查一下自己维护的业务系统的 JVM 参数配置，用 jstat 和 jstack、jmap 查看一下详情，并且自己独立分析一下大概情况，思考有没有不合理的地方，如何改进。
+
+存在的问题:
+
+* 测试环境与生产环境的 GC设置不一致:  容易导致测试环境没问题，线上有问题。
+* 生产环境没有保存GC日志到文件, 无法分析GC日志
+* 生产环境GC设置不合理， 主要包含两方面
+    * GC设置不合理
+    * GC 参数设置不合理
+
+目前线上服务都是使用的 G1 GC ， 但是内存基本在 512m 到 1g 的内存， 使用G1 没有 CMS 和 ParallelGC 表现好
+
+G1在 低内存条件下，吞吐量和GC效率 跟 SerialGC 差不多.
+
+**如果考虑更多的吞吐量 应该使用  Parallel GC**
+
+**如果考虑更低的GC延迟，应该使用CMS**
+
+线上中间层的GC统计信息:
+
+![图片](https://uploader.shimo.im/f/ZW7XI0cQsbwobTZV.png!thumbnail?fileGuid=jVJcRYRRkD3hgWvC)
+
+可以看出 YGC 的次数高达 5596 ,  FGC 30 次， 总的GC时间 150 s
+
+### 5、本机使用 G1 GC 启动一个程序，仿照课上案例分析一下 JVM 情况。可以使用 gateway-server-0.0.1-SNAPSHOT.jar 注意关闭自适应参数:-XX:-UseAdaptiveSizePolicy
 
 ```shell
 # SerialGC
