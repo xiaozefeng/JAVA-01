@@ -1,7 +1,6 @@
 package io.github.mickey.server;
 
 
-import io.github.mickey.Application;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -11,12 +10,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BootstrapServer {
 
-    private final Logger logger = LoggerFactory.getLogger(Application.class);
     private final int port;
 
     public BootstrapServer(int port) {
@@ -40,15 +38,13 @@ public class BootstrapServer {
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
         try {
-
-
             b.group(boos, work)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new BootstrapServerInitializer());
 
             final Channel c = b.bind(port).sync().channel();
-            logger.info("start netty server at "  + port);
+            log.info("start netty server at "  + port);
             c.closeFuture().sync();
         }finally {
             boos.shutdownGracefully();

@@ -1,16 +1,15 @@
 package io.github.mickey.executor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ProxyServiceExecutor {
 
-    private final static Logger logger = LoggerFactory.getLogger(ProxyServiceExecutor.class);
 
     private static final ThreadPoolExecutor EXECUTOR;
 
@@ -22,7 +21,7 @@ public class ProxyServiceExecutor {
         EXECUTOR = new ThreadPoolExecutor(cores, cores, keepAliveTime, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(queueSize), new NamedThreadFactory("proxyService"),
                 rejectedExecutionHandler);
-        logger.info("proxy service executor init success");
+        log.info("proxy service executor init success");
     }
 
     public static ThreadPoolExecutor getExecutor() {

@@ -10,12 +10,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCountUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class BootstrapServerHandler extends ChannelInboundHandlerAdapter {
-    private final Logger logger = LoggerFactory.getLogger(BootstrapServerHandler.class);
 
     private final ServiceHandler serviceHandler;
     private final String serviceId;
@@ -45,7 +44,7 @@ public class BootstrapServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void processResponse(ChannelHandlerContext ctx, FullHttpRequest request, byte[] content) {
-        logger.info("process response");
+        log.info("process response");
         final boolean keepAlive = HttpUtil.isKeepAlive(request);
         FullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(), HttpResponseStatus.OK,
                 Unpooled.wrappedBuffer(content));
@@ -75,7 +74,7 @@ public class BootstrapServerHandler extends ChannelInboundHandlerAdapter {
 
     private String processRequest(FullHttpRequest request) {
         final String backendUrl = ServiceConfig.get(serviceId);
-        logger.info("backend url:${}, request uri:${}", backendUrl, request.uri());
+        log.info("backend url:${}, request uri:${}", backendUrl, request.uri());
         return backendUrl + request.uri();
     }
 

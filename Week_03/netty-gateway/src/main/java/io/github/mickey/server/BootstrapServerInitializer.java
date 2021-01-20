@@ -17,7 +17,7 @@ public class BootstrapServerInitializer extends ChannelInitializer<SocketChannel
 
         p.addLast(new HttpServerCodec());
         p.addLast(new HttpObjectAggregator(1024 * 1024));
-        p.addLast(new HttpServerExpectContinueHandler());
+//        p.addLast(new HttpServerExpectContinueHandler());
         p.addLast(new BootstrapServerHandler(new OkHTTPServiceHandler() , "backend"));
     }
 
