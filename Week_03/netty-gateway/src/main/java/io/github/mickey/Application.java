@@ -1,17 +1,18 @@
 package io.github.mickey;
 
 
+import io.github.mickey.server.BootstrapServer;
 
 public class Application {
 
-    private static final int PORT = Integer.parseInt(System.getProperty("proxyService", "backend"));
+    private static final int PORT = Integer.parseInt(System.getProperty("port", "8888"));
 
-    public static void main(String[] args) {
-        Application.run(PORT);
+    public static void main(String[] args) throws Exception {
+        Application.run();
     }
 
-    private static void run(int port) {
-        new InnerServer(port).start();
+    private static void run() throws Exception {
+        new BootstrapServer(Application.PORT).start();
     }
 
 }

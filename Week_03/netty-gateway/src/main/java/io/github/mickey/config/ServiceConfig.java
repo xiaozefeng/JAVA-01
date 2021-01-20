@@ -12,9 +12,9 @@ public class ServiceConfig {
         SERVICES.put("backend", "http://localhost:8080/");
     }
 
-    public static Object get(Object key) {
+    public static String get(String key) {
         assert key != null;
-        return SERVICES.get(key.toString());
+        return SERVICES.get(key);
     }
 
 
