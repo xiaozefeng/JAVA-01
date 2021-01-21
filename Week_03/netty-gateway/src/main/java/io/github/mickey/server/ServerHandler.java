@@ -1,6 +1,8 @@
 package io.github.mickey.server;
 
+import com.sun.org.apache.xml.internal.resolver.Catalog;
 import io.github.mickey.config.ServiceConfig;
+import io.github.mickey.executor.ProxyServiceExecutor;
 import io.github.mickey.filter.both.PreAndPostFilter;
 import io.github.mickey.filter.both.TimeFilter;
 import io.github.mickey.filter.post.HTTPResponseHeaderFilter;
@@ -77,17 +79,13 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         FullHttpRequest request = (FullHttpRequest) msg;
         try {
-//            ProxyServiceExecutor.getExecutor().submit(() -> {
-//                try {
-            final List<String> endpoints = getEndpoints(request);
-            doPreFilters(preFilters, preAndPostFilters, request, ctx);
-            router.route(endpoints, bytes -> {
-                doPostFilters(postFilters, preAndPostFilters, bytes, request, ctx);
+            ProxyServiceExecutor.getExecutor().submit(() -> {
+                final List<String> endpoints = getEndpoints(request);
+                doPreFilters(preFilters, preAndPostFilters, request, ctx);
+                router.route(endpoints, bytes -> {
+                    doPostFilters(postFilters, preAndPostFilters, bytes, request, ctx);
+                });
             });
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            });
         } finally {
             ReferenceCountUtil.release(msg);
         }
