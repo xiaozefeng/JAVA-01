@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.*;
 
 public class HTTPServerHandler extends SimpleChannelInboundHandler<HttpObject> {
 
-    private static final byte[] CONTENT = {'h', 'e', 'l', 'l', 'o', ',', 'n', 'i', 'o'};
+    private static final byte[] CONTENT = {'h', 'e', 'l', 'l', 'o', ',', 'n', 'e', 'e', 't','t','y'};
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {

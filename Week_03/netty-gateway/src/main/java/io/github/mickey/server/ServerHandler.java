@@ -27,15 +27,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
-    private final String serviceId;
-
     private List<PreFilter> preFilters;
     private List<PostFilter> postFilters;
     private HTTPEndpointRouter router;
 
 
-    public ServerHandler(String serviceId) {
-        this.serviceId = serviceId;
+    public ServerHandler() {
         init();
     }
 
@@ -59,11 +56,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         FullHttpRequest request = (FullHttpRequest) msg;
         try {
             ProxyServiceExecutor.getExecutor().submit(() -> {
-                final List<String> endpoints = getEndpoints(request, serviceId);
-                doPreFilters(preFilters, request, ctx);
-                router.route(endpoints, bytes -> {
-                    doPostFilters(postFilters, bytes, request, ctx);
-                });
+                try {
+                    final List<String> endpoints = getEndpoints(request);
+                    doPreFilters(preFilters, request, ctx);
+                    router.route(endpoints, bytes -> {
+                        doPostFilters(postFilters, bytes, request, ctx);
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
         } finally {
             ReferenceCountUtil.release(msg);
@@ -117,12 +118,20 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     }
 
 
-    private List<String> getEndpoints(FullHttpRequest request, String serviceId) {
+    private List<String> getEndpoints(FullHttpRequest request) {
+        String serviceId = getServiceId(request);
         List<String> urls = ServiceConfig.get(serviceId);
         log.info("proxy urls:${}, request uri:${}", urls, request.uri());
         urls = urls.stream().map(e -> e.concat(request.uri()))
                 .collect(Collectors.toList());
         return urls;
+    }
+
+    private String getServiceId(FullHttpRequest request) {
+        String serviceId = request.headers().get("serviceId");
+        if (serviceId == null || "".equals(serviceId))
+            serviceId = "backend";
+        return serviceId;
     }
 
 
