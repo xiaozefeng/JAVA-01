@@ -14,7 +14,7 @@ public class OkHTTPServiceHandler implements ServiceHandler {
     private final OkHttpClient client = new OkHttpClient();
 
     @Override
-    public byte[] handle(String url, Consumer<byte[]> callback) {
+    public void handle(String url, Consumer<byte[]> callback) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -36,6 +36,5 @@ public class OkHTTPServiceHandler implements ServiceHandler {
                 }
             }
         });
-        return null;
     }
 }

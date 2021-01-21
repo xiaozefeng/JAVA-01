@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 public class HTTPServer03 {
 
-    private static final int port = Integer.parseInt(System.getProperty("port", "8001"));
+    private static final int port = Integer.parseInt(System.getProperty("port", "8003"));
 
     public static void main(String[] args) throws Exception{
         ExecutorService es = Executors.newFixedThreadPool(40);
@@ -24,10 +24,11 @@ public class HTTPServer03 {
 
     private static void process(Socket socket) {
         try {
+            System.out.println("I am Server03");
             PrintWriter pw = new PrintWriter(socket.getOutputStream());
             pw.println("HTTP/1.1 200 OK");
             pw.println("Content-Type:text/html;charset=utf8");
-            String body = "hello,nio";
+            String body = "hello,nio3";
             pw.println("Content-Length:" + body.getBytes(StandardCharsets.UTF_8).length);
             pw.println();
             pw.write(body);

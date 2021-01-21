@@ -20,10 +20,11 @@ public class HTTPServer01 {
 
     private static void process(Socket socket) {
         try {
+            System.out.println("I am Server01");
             PrintWriter pw = new PrintWriter(socket.getOutputStream());
             pw.println("HTTP/1.1 200 OK");
             pw.println("Content-Type:text/html;charset=utf8");
-            String body = "hello,nio";
+            String body = "hello,nio1";
             pw.println("Content-Length:" + body.getBytes(StandardCharsets.UTF_8).length);
             pw.println();
             pw.write(body);

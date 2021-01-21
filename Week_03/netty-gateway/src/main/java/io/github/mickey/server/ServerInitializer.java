@@ -1,14 +1,12 @@
 package io.github.mickey.server;
 
-import io.github.mickey.handler.OkHTTPServiceHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 
-public class BootstrapServerInitializer extends ChannelInitializer<SocketChannel> {
+public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
 
     @Override
@@ -18,7 +16,7 @@ public class BootstrapServerInitializer extends ChannelInitializer<SocketChannel
         p.addLast(new HttpServerCodec());
         p.addLast(new HttpObjectAggregator(1024 * 1024));
 //        p.addLast(new HttpServerExpectContinueHandler());
-        p.addLast(new BootstrapServerHandler(new OkHTTPServiceHandler() , "backend"));
+        p.addLast(new ServerHandler("backend"));
     }
 
 }

@@ -13,11 +13,11 @@ import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class BootstrapServer {
+public class Server {
 
     private final int port;
 
-    public BootstrapServer(int port) {
+    public Server(int port) {
         this.port = port;
     }
 
@@ -41,7 +41,7 @@ public class BootstrapServer {
             b.group(boos, work)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new BootstrapServerInitializer());
+                    .childHandler(new ServerInitializer());
 
             final Channel c = b.bind(port).sync().channel();
             log.info("start netty server at "  + port);

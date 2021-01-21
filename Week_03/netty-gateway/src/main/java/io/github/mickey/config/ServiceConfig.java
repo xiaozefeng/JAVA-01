@@ -1,18 +1,25 @@
 package io.github.mickey.config;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceConfig {
 
-    private static final Map<String, String> SERVICES;
+    private static final Map<String, List<String>> SERVICES;
 
     static {
-        SERVICES = new HashMap<>();
-        SERVICES.put("backend", "http://localhost:8080/");
+        SERVICES = new ConcurrentHashMap<>();
+        List<String> backendURLs = new ArrayList<>();
+        backendURLs.add("http://localhost:8001/");
+        backendURLs.add("http://localhost:8002/");
+        backendURLs.add("http://localhost:8003/");
+        SERVICES.put("backend", backendURLs);
+
     }
 
-    public static String get(String key) {
+    public static List<String>  get(String key) {
         assert key != null;
         return SERVICES.get(key);
     }

@@ -1,7 +1,7 @@
 package io.github.mickey;
 
 
-import io.github.mickey.server.BootstrapServer;
+import io.github.mickey.server.Server;
 
 public class Application {
 
@@ -12,7 +12,7 @@ public class Application {
     }
 
     private static void run() throws Exception {
-        new BootstrapServer(Application.PORT).start();
+        new Server(Application.PORT).start();
     }
 
 }

@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 public class HTTPServer02 {
 
-    private static final int port = Integer.parseInt(System.getProperty("port", "8001"));
+    private static final int port = Integer.parseInt(System.getProperty("port", "8002"));
 
     public static void main(String[] args) throws Exception{
 
@@ -22,10 +22,11 @@ public class HTTPServer02 {
 
     private static void process(Socket socket) {
         try {
+            System.out.println("I am Server02");
             PrintWriter pw = new PrintWriter(socket.getOutputStream());
             pw.println("HTTP/1.1 200 OK");
             pw.println("Content-Type:text/html;charset=utf8");
-            String body = "hello,nio";
+            String body = "hello,nio2";
             pw.println("Content-Length:" + body.getBytes(StandardCharsets.UTF_8).length);
             pw.println();
             pw.write(body);
