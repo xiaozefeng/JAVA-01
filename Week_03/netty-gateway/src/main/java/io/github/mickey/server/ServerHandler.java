@@ -1,7 +1,7 @@
 package io.github.mickey.server;
 
 import io.github.mickey.config.ServiceConfig;
-import io.github.mickey.executor.ProxyServiceExecutor;
+import io.github.mickey.filter.both.PreAndPostFilter;
 import io.github.mickey.filter.both.TimeFilter;
 import io.github.mickey.filter.post.HTTPResponseHeaderFilter;
 import io.github.mickey.filter.post.PostFilter;
@@ -29,6 +29,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     private List<PreFilter> preFilters;
     private List<PostFilter> postFilters;
+    private List<PreAndPostFilter> preAndPostFilters;
     private HTTPEndpointRouter router;
 
 
@@ -37,14 +38,35 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void init() {
-        this.preFilters = new ArrayList<>();
-        this.preFilters.add(new HTTPRequestHeaderFilter());
-        this.preFilters.add(new TimeFilter());
-        this.postFilters = new ArrayList<>();
-        this.postFilters.add(new HTTPResponseHeaderFilter());
-        this.postFilters.add(new TimeFilter());
-        this.router = new RandomHTTPEndpointRouter(new OkHTTPServiceHandler());
+        this.preFilters = loadPreFilters();
+        this.postFilters = loadPostFilters();
+        this.preAndPostFilters = loadPreAndPostFilters();
+        this.router = initRouter();
     }
+
+    // todo 如何解耦
+    private HTTPEndpointRouter initRouter() {
+        return new RandomHTTPEndpointRouter(new OkHTTPServiceHandler());
+    }
+
+    private List<PreAndPostFilter> loadPreAndPostFilters() {
+        List<PreAndPostFilter> filters = new ArrayList<>();
+        filters.add(new TimeFilter());
+        return filters;
+    }
+
+    private List<PostFilter> loadPostFilters() {
+        List<PostFilter> filters = new ArrayList<>();
+        filters.add(new HTTPResponseHeaderFilter());
+        return filters;
+    }
+
+    private List<PreFilter> loadPreFilters() {
+        List<PreFilter> filters = new ArrayList<>();
+        filters.add(new HTTPRequestHeaderFilter());
+        return filters;
+    }
+
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
@@ -55,17 +77,17 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         FullHttpRequest request = (FullHttpRequest) msg;
         try {
-            ProxyServiceExecutor.getExecutor().submit(() -> {
-                try {
-                    final List<String> endpoints = getEndpoints(request);
-                    doPreFilters(preFilters, request, ctx);
-                    router.route(endpoints, bytes -> {
-                        doPostFilters(postFilters, bytes, request, ctx);
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//            ProxyServiceExecutor.getExecutor().submit(() -> {
+//                try {
+            final List<String> endpoints = getEndpoints(request);
+            doPreFilters(preFilters, preAndPostFilters, request, ctx);
+            router.route(endpoints, bytes -> {
+                doPostFilters(postFilters, preAndPostFilters, bytes, request, ctx);
             });
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            });
         } finally {
             ReferenceCountUtil.release(msg);
         }
@@ -73,12 +95,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    private void doPostFilters(List<PostFilter> postFilters, byte[] result, FullHttpRequest request, ChannelHandlerContext ctx) {
+    private void doPostFilters(List<PostFilter> postFilters, List<PreAndPostFilter> preAndPostFilters, byte[] result, FullHttpRequest request, ChannelHandlerContext ctx) {
         FullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(), HttpResponseStatus.OK,
                 Unpooled.wrappedBuffer(result));
 
         for (PostFilter postFilter : postFilters)
             postFilter.postFilter(response, ctx);
+
+        for (PreAndPostFilter filter : preAndPostFilters)
+            filter.postFilter(response, ctx);
+
 
         writeAndFlush(ctx, request, response);
     }
@@ -88,9 +114,13 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     }
 
 
-    private void doPreFilters(List<PreFilter> preFilters, FullHttpRequest request, ChannelHandlerContext ctx) {
+    private void doPreFilters(List<PreFilter> preFilters, List<PreAndPostFilter> preAndPostFilters, FullHttpRequest request, ChannelHandlerContext ctx) {
         for (PreFilter preFilter : preFilters)
             preFilter.preFilter(request, ctx);
+
+        for (PreAndPostFilter filter : preAndPostFilters)
+            filter.preFilter(request, ctx);
+
     }
 
     private void processResponse(ChannelHandlerContext ctx, FullHttpRequest request, byte[] content) {
