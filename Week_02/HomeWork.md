@@ -156,7 +156,7 @@ G1: Garbage First ， 垃圾优先， G1会优先清理 垃圾大的 region。
 
 **1.（选做）**运行课上的例子，以及 Netty 的例子，分析相关现象。
 
-![图片](https://uploader.shimo.im/f/Kl3AyODDq2wSILpa.png!thumbnail?fileGuid=dqYqKh9dKTkGJDY8)
+![图片](https://shimo-uploader-images.oss-cn-beijing.aliyuncs.com/uploader-cache/Kl3AyODDq2wSILpa.png/thumbnail?Expires=1611329476&OSSAccessKeyId=LTAI4FoEPTasjWkqu1meFaHK&Signature=uciHD1%2FnV9ieacEBCadW32g4WWw%3D&response-content-disposition=inline%3B+filename%3D%22image.png%22%3B+filename%2A%3DUTF-8%27%27image.png)
 
 **8个连接，2个线程 1分钟  ，  JVM参数  -Xmx512m -Xms512m**
 
