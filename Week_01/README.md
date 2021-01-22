@@ -29,7 +29,7 @@ JVM 字节码对照表:[https://www.cnblogs.com/tsvico/p/12708417.html](https://
 * iaload , iastore 数组变量的入栈，出栈
 * dup 复制栈顶数值，并入栈
 
-![图片](https://uploader.shimo.im/f/Ap5NuErKsnBEGokB.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+![image](https://gitee.com/xiaozefeng/images/raw/master/pic/image.png)
 
 #### 程序流程操作指令
 
@@ -87,7 +87,7 @@ x2x 从某个类型转换成某个类型
 
 ## 类加载器
 
-![图片](https://uploader.shimo.im/f/srRbLVP6LdQsdoNK.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+![classloader](https://gitee.com/xiaozefeng/images/raw/master/pic/classloader.png)
 
 ### 触发初始化的情况
 
@@ -108,7 +108,7 @@ x2x 从某个类型转换成某个类型
 * 通过 ClassLoader.loadClass() 只会加载类，不会初始化
 ### 类加载机制
 
-![图片](https://uploader.shimo.im/f/HWeWcq8ERnf3dYTd.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+![classloader1](https://gitee.com/xiaozefeng/images/raw/master/pic/classloader1.png)
 
 #### 加载器的特点:
 
@@ -188,7 +188,7 @@ JMM 规范明确定义了不同线程之间，通过哪些方式，在什么时�
 
 这样做的好处是屏蔽了各种硬件平台和操作系统之间的内存访问差异，实现Java并发程序的真正跨平台。
 
-![图片](https://uploader.shimo.im/f/P206yOawsz2VyOUQ.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+![jvm](https://gitee.com/xiaozefeng/images/raw/master/pic/jvm.png)
 
 JVM 粗略来看可以分为 线程共享和 非线程共享 两个区域
 
@@ -282,7 +282,7 @@ java -XX:+PrintFlagsFinal -version | grep HeapSize
 
 4. 画出 Xmx, Xms, Xmn , MetaSpace, DirectMemory, Xss 的关系
 
-![图片](https://uploader.shimo.im/f/7O6OFOvJh728s9ny.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+![jvm_args_relation](https://gitee.com/xiaozefeng/images/raw/master/pic/jvm_args_relation.png)
 
 * Xmx 包含 xmn
 * xss 和xmx 没有关系， 跟操作系统可用内存有关系，如果硬说 xmx 和xss的关系， xmx越大那么xss的可用就越小,  xmx 固定的情况下，xss设置的越小， 可用线程数就越多 (直到达到操作系统的限制)**公式:   (OS可用内存 -  xmx) / xss**
@@ -295,7 +295,7 @@ java -XX:+PrintFlagsFinal -version | grep HeapSize
 ```plain
 java -XX:+PrintCommandLineFlags -version
 ```
-### ![图片](https://uploader.shimo.im/f/X6hkmw9b6YIKmuvh.png!thumbnail?fileGuid=hJ9jk3hgdQyvyyTw)
+### ![gc01](https://gitee.com/xiaozefeng/images/raw/master/pic/gc01.png)
 
 ### 
 ### 分析诊断参数
