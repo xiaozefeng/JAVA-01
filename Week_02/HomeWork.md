@@ -8,7 +8,7 @@
 #!/bin/bash
 java "-Xmx$2" "-Xms$2" "-XX:+Use$1GC" -XX:+PrintGCDetails -XX:+PrintGCDateStamps  GCLogAnalysis
 ```
-**脚本准备 analysis.sh****分析时不打印GC日志**
+**脚本准备 analysis.sh****分析时不打印GC日志  删除掉**-XX:+PrintGCDetails -XX:+PrintGCDateStamps
 ```shell
 #!/bin/bash
 number=$3
