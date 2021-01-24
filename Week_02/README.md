@@ -190,7 +190,9 @@ public static void main(String[] args) throws Exception{
 
 >Neety is an anynchronous event-driven network application framework for repid development of maintainable high performance protocol servers & clients
 
-![图片](https://uploader.shimo.im/f/hIuWR5tv3wz5c2pg.png!thumbnail?fileGuid=tDRrHpVTgQDqHgcJ)
+![components](https://gitee.com/xiaozefeng/images/raw/master/pic/20210124234121.png)
+
+
 
 * 异步
 * 事件驱动
@@ -254,7 +256,7 @@ ChannelOutboundHandlerAdapter
 
 每个Channel 都有自己的 ChannelPipeline ，在Channel被创建的时候会自动创建相关联的 ChannelPipeline.
 
-![图片](https://uploader.shimo.im/f/uI8AcKZ5n4bNDZrb.png!thumbnail?fileGuid=tDRrHpVTgQDqHgcJ)
+![in_out](https://gitee.com/xiaozefeng/images/raw/master/pic/20210124234140.png)
 
 **顺序评估**
 
@@ -295,7 +297,7 @@ readerIndex 用于读操作
 
 writerIndex 用于写操作
 
-![图片](https://uploader.shimo.im/f/48JM9uTMWgeImaPN.png!thumbnail?fileGuid=tDRrHpVTgQDqHgcJ)
+![read_write](https://gitee.com/xiaozefeng/images/raw/master/pic/20210124234206.png)
 
 #### Readable byte (The Actual Content)
 
