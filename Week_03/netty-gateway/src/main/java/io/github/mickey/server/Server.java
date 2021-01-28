@@ -24,7 +24,7 @@ public class Server {
 
     public void start() throws Exception{
         NioEventLoopGroup boos = new NioEventLoopGroup(1);
-        NioEventLoopGroup work = new NioEventLoopGroup(16);
+        NioEventLoopGroup work = new NioEventLoopGroup();
 
         ServerBootstrap b = new ServerBootstrap();
         b.option(ChannelOption.SO_BACKLOG, 128)

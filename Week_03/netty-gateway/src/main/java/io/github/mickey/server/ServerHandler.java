@@ -1,6 +1,5 @@
 package io.github.mickey.server;
 
-import com.sun.org.apache.xml.internal.resolver.Catalog;
 import io.github.mickey.config.ServiceConfig;
 import io.github.mickey.executor.ProxyServiceExecutor;
 import io.github.mickey.filter.both.PreAndPostFilter;
@@ -46,7 +45,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         this.router = initRouter();
     }
 
-    // todo 如何解耦
     private HTTPEndpointRouter initRouter() {
         return new RandomHTTPEndpointRouter(new OkHTTPServiceHandler());
     }

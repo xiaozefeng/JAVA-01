@@ -6,12 +6,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.function.Consumer;
 
 @Slf4j
 public class OkHTTPServiceHandler implements ServiceHandler {
 
-    private final OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client;
+
+    public OkHTTPServiceHandler() {
+        client = new OkHttpClient.Builder()
+                .connectTimeout(Duration.ofSeconds(15))
+                .readTimeout(Duration.ofSeconds(15))
+                .build();
+    }
 
     @Override
     public void handle(String url, Consumer<byte[]> callback) {
