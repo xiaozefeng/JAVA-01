@@ -225,7 +225,7 @@ option 针对于 ServerSocketChannel
 
 childOption 针对于每个创建的客户端 SocketChannel
 
-![图片](https://uploader.shimo.im/f/NpAVDlFboBbmfbKi.png?fileGuid=VcYJD9Qg9vrRTW6d)
+![1](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105910.png)
 
 ### Channel Handler Inbound 和 Outbound 顺序
 
