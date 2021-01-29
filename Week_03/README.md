@@ -62,7 +62,7 @@ JDK 带来了 性能更好的NIO，但是JDK NIO API十分难用还容易出错�
 
 对应计算机世界，每个客户端都连接都用一个线程去处理，但是线程的数量是有限的，不能无限创建，而且线程之间抢CPU时间片造成上线文切换会随着线程数量的增多而急剧恶化。
 
-![图片](https://uploader.shimo.im/f/AAI1vahSqynBwdMX.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105444.png)
 
 
 ### Reactor模型
@@ -88,7 +88,7 @@ Server 中的 SocketChannel 注册了 op_write , op_read 事件
 
 多个客户端复用一个线程处理请求。因为这个线程是基于事件驱动的所以不会阻塞。
 
-![图片](https://uploader.shimo.im/f/rbcVdYsGq8k91UrU.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105425.png)
 
 ```java
 # Netty中实现 单线程 Reactor
@@ -103,7 +103,7 @@ b.group(group);
 
 在计算机世界里，具体的业务使用 线程池去做的，同时线程池还有一个缓冲队列，进一步提高了系统吞吐量。
 
-![图片](https://uploader.shimo.im/f/3cXoA37soSKhN9OM.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105432.png)
 
 ```java
 # Netty中实现 多线程 Reactor
@@ -115,7 +115,7 @@ b.group(group);
 
 相比于 多线程 Reactor,  分工进一步细化，聘请几个专业的迎宾，只负责接待客人。
 
-![图片](https://uploader.shimo.im/f/CSA22P1gYFLbW8Lm.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105500.png)
 
 ```java
 NioEventLoopGroup boss = new NioEventLoopGroup(1);
@@ -137,7 +137,7 @@ b.group(boss, worker);
 
 cleint  发送报文给 server ， server 一接受到就建立连接， 由于网络环境的不可靠，如果这个连接在 client 端已经是被废弃的，那么server 就保持了一个无用的连接。(想一想这种连接过多会怎样 ?)
 
-****![图片](https://uploader.shimo.im/f/LOsnwiG8uUtNO0HB.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+****![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105505.png)
 
 
 ### **四次挥手**
@@ -157,7 +157,7 @@ cleint  发送报文给 server ， server 一接受到就建立连接， 由于�
 
 有了 2个MSL等待:  如果 server 收不到 cleint 的第四次挥手，会再发一次 第三次挥手，因为这个时候 client 在等待，所以能收到。
 
-![图片](https://uploader.shimo.im/f/F2WHaKbLqsTiKkwP.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105512.png)
 
 
 ## TCP 粘包 & 半包问题
@@ -204,11 +204,11 @@ TCP是流式协议，就像流水一样，消息之间没有边界
 
 ### 启动流程
 
-![图片](https://uploader.shimo.im/f/i6RyT6faZBjBQs2W.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105551.png)
 
 ### 处理流程
 
-![图片](https://uploader.shimo.im/f/JGOfdEUwm0IdkMlG.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105526.png)
 
 
 ### 什么是一次解码器？
@@ -225,11 +225,11 @@ option 针对于 ServerSocketChannel
 
 childOption 针对于每个创建的客户端 SocketChannel
 
-![图片](https://uploader.shimo.im/f/NpAVDlFboBbmfbKi.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://uploader.shimo.im/f/NpAVDlFboBbmfbKi.png?fileGuid=VcYJD9Qg9vrRTW6d)
 
 ### Channel Handler Inbound 和 Outbound 顺序
 
-![图片](https://uploader.shimo.im/f/uI8AcKZ5n4bNDZrb.png!thumbnail?fileGuid=VcYJD9Qg9vrRTW6d)
+![图片](https://gitee.com/xiaozefeng/images/raw/master/pic/20210129105616.png)
 
 **顺序评估**
 
