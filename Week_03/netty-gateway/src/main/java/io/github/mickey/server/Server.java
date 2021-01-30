@@ -27,7 +27,7 @@ public class Server {
         NioEventLoopGroup work = new NioEventLoopGroup();
 
         ServerBootstrap b = new ServerBootstrap();
-        b.option(ChannelOption.SO_BACKLOG, 128)
+        b.option(ChannelOption.SO_BACKLOG, 1024)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.SO_REUSEADDR, true)
