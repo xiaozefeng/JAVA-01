@@ -10,3 +10,4 @@ public class Way9 {
         System.out.println(cf.get());
     }
 }
+
