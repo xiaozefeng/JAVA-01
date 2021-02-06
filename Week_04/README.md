@@ -1,3 +1,7 @@
+## 脑图总结
+
+![Java-Concurrent](https://gitee.com/xiaozefeng/images/raw/master/pic/20210206205523.png)
+
 ##  锁
 
 锁是用来保证 并发**互斥性**的，表示同一时间只有一个先吃可以访问互斥的共享资源。
