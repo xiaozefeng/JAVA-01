@@ -21,10 +21,12 @@ public class AppContext {
     }
 
     private Interceptor getInterceptor() {
+        // todo how to find interceptor implement
         return new CustomInterceptor();
     }
 
     private <T> Object getImpl(Class<T> clazz) {
+        // todo how to get T class implement
         return new FooImpl();
     }
 
