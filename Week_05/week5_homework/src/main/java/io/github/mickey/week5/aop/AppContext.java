@@ -1,8 +1,10 @@
 package io.github.mickey.week5.aop;
 
 import io.github.mickey.week5.aop.handler.ProxyHandler;
+import io.github.mickey.week5.aop.interceptor.Interceptor;
 
 import java.lang.reflect.Proxy;
+import java.util.ServiceLoader;
 
 /**
  * @author mickey
@@ -15,19 +17,21 @@ public class AppContext {
 
     public <T> T getBean(Class<T> clazz) {
         Object target = getImpl(clazz);
+        if (target == null) return null;
         Interceptor interceptor = getInterceptor();
         Object o = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new ProxyHandler(interceptor, target));
         return (T) o;
     }
 
     private Interceptor getInterceptor() {
-        // todo how to find interceptor implement
-        return new CustomInterceptor();
+        // just find one implement
+        ServiceLoader<Interceptor> loader = ServiceLoader.load(Interceptor.class);
+        return loader.findFirst().orElse(null);
     }
 
     private <T> Object getImpl(Class<T> clazz) {
-        // todo how to get T class implement
-        return new FooImpl();
+        ServiceLoader<T> loader= ServiceLoader.load(clazz);
+        return loader.findFirst().orElse(null);
     }
 
 }

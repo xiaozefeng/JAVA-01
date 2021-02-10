@@ -1,6 +1,6 @@
 package io.github.mickey.week5.aop.handler;
 
-import io.github.mickey.week5.aop.Interceptor;
+import io.github.mickey.week5.aop.interceptor.Interceptor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -23,11 +23,14 @@ public class ProxyHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
-            boolean pre = interceptor.pre();
+            boolean pre = true;
+            if (interceptor != null)
+                pre = interceptor.pre();
             if (!pre) return null;
             return method.invoke(target, args);
         } finally {
-            interceptor.after();
+            if (interceptor != null)
+                interceptor.after();
         }
     }
 }

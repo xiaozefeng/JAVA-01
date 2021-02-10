@@ -1,4 +1,4 @@
-package io.github.mickey.week5.aop;
+package io.github.mickey.week5.aop.interceptor;
 
 /**
  * @author mickey
