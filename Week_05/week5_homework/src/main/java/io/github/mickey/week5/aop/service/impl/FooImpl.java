@@ -1,4 +1,6 @@
-package io.github.mickey.week5.aop;
+package io.github.mickey.week5.aop.service.impl;
+
+import io.github.mickey.week5.aop.service.Foo;
 
 /**
  * @author mickey

@@ -1,1 +1,1 @@
-io.github.mickey.week5.aop.interceptor.CustomInterceptor
+io.github.mickey.week5.aop.interceptor.LogInterceptor

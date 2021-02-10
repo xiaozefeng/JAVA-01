@@ -1,5 +1,7 @@
 package io.github.mickey.week5.aop;
 
+import io.github.mickey.week5.aop.service.Foo;
+
 /**
  * @author mickey
  * @date 2/8/21 21:31
