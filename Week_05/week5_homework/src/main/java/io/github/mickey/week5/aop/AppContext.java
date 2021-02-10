@@ -2,10 +2,10 @@ package io.github.mickey.week5.aop;
 
 import io.github.mickey.week5.aop.handler.ProxyHandler;
 import io.github.mickey.week5.aop.interceptor.Interceptor;
+import org.reflections.Reflections;
 
 import java.lang.reflect.Proxy;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AppContext {
 
     private final Map<String, Object> CACHE = new ConcurrentHashMap<>();
+
+    private final Reflections reflections = new Reflections(AppContext.class.getPackage().getName());
 
     public AppContext() {
     }
@@ -49,8 +51,18 @@ public class AppContext {
 
     private <T> Object getImpl(Class<T> clazz) {
         // just find one implement
-        ServiceLoader<T> loader= ServiceLoader.load(clazz);
-        return loader.findFirst().orElse(null);
+        //ServiceLoader<T> loader= ServiceLoader.load(clazz);
+        //return loader.findFirst().orElse(null);
+        Set<Class<? extends T>> subTypesOf = reflections.getSubTypesOf(clazz);
+        List<Object> arr = new ArrayList<>();
+        subTypesOf.forEach(e -> {
+            try {
+                arr.add(e.getDeclaredConstructor().newInstance());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        return arr.get(0);
     }
 
 }
