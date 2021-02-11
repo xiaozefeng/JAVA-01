@@ -4,8 +4,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 public class TimeFilter implements PreAndPostFilter {
 //    private static final AtomicLong start = new AtomicLong();
 

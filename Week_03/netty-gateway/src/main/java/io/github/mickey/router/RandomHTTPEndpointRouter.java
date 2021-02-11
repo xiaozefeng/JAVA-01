@@ -1,17 +1,19 @@
 package io.github.mickey.router;
 
 import io.github.mickey.handler.ServiceHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+@Component
 public class RandomHTTPEndpointRouter implements HTTPEndpointRouter {
-    private final ServiceHandler serviceHandler;
 
-    public RandomHTTPEndpointRouter(ServiceHandler serviceHandler) {
-        this.serviceHandler = serviceHandler;
-    }
+    @Autowired
+    private  ServiceHandler serviceHandler;
+
 
     @Override
     public void route(List<String> endpoints, Consumer<byte[]> callback) {

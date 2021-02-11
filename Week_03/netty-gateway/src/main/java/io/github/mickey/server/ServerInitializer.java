@@ -1,5 +1,6 @@
 package io.github.mickey.server;
 
+import io.github.mickey.util.ApplicationContextUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -15,7 +16,7 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
         p.addLast(new HttpServerCodec());
         p.addLast(new HttpObjectAggregator(1024 * 1024));
-        p.addLast(new ServerHandler());
+        p.addLast(ApplicationContextUtil.getApplicationContext().getBean(ServerHandler.class));
     }
 
 }

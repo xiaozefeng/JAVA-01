@@ -3,18 +3,25 @@ package io.github.mickey.handler;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.function.Consumer;
 
 @Slf4j
+@Component
 public class OkHTTPServiceHandler implements ServiceHandler {
 
-    private final OkHttpClient client;
+    private OkHttpClient client;
 
     public OkHTTPServiceHandler() {
+    }
+
+    @PostConstruct
+    public void init(){
         client = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofSeconds(15))
                 .readTimeout(Duration.ofSeconds(15))
