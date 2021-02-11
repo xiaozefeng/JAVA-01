@@ -23,7 +23,7 @@ public class OkHTTPServiceHandler implements ServiceHandler {
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         client = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofSeconds(15))
                 .readTimeout(Duration.ofSeconds(15))
@@ -46,11 +46,8 @@ public class OkHTTPServiceHandler implements ServiceHandler {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-                try (final ResponseBody body = response.body();) {
-                    //final String content = body.string();
-                    //log.info("response string:${}", content);
-                    //callback.accept(content.getBytes(StandardCharsets.UTF_8));
-                    guardedObject.onDone(body.bytes());
+                try (final ResponseBody body = response.body()) {
+                    guardedObject.onDone(body == null ? null : body.bytes());
                 }
             }
         });

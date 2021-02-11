@@ -11,6 +11,7 @@ import java.util.function.Predicate;
  * @date 2/11/21 18:23
  */
 public class GuardedObject<T> {
+
     private T obj;
     private final Lock lock = new ReentrantLock();
     private final Condition done = lock.newCondition();
@@ -18,8 +19,7 @@ public class GuardedObject<T> {
     private final TimeUnit timeUnit;
 
     public GuardedObject(int timeout) {
-        this.timeout = timeout;
-        this.timeUnit = TimeUnit.SECONDS;
+        this(timeout, TimeUnit.SECONDS);
     }
 
     public GuardedObject(int timeout, TimeUnit timeUnit) {
@@ -32,6 +32,7 @@ public class GuardedObject<T> {
             lock.lock();
             while (!p.test(obj))
                 done.await(timeout, timeUnit);
+
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {

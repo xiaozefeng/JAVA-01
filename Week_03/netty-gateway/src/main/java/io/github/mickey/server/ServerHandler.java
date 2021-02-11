@@ -1,9 +1,8 @@
 package io.github.mickey.server;
 
 import io.github.mickey.config.ServiceConfigLoader;
-import io.github.mickey.filter.both.PreAndPostFilter;
-import io.github.mickey.filter.post.PostFilter;
-import io.github.mickey.filter.pre.PreFilter;
+import io.github.mickey.context.Context;
+import io.github.mickey.context.ContextHolder;
 import io.github.mickey.router.HTTPEndpointRouter;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
@@ -24,14 +24,6 @@ import java.util.stream.Collectors;
 @ChannelHandler.Sharable
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
-    @Autowired
-    private List<PreFilter> preFilters;
-
-    @Autowired
-    private List<PostFilter> postFilters;
-
-    @Autowired
-    private List<PreAndPostFilter> preAndPostFilters;
 
     @Autowired
     private HTTPEndpointRouter router;
@@ -43,8 +35,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public ServerHandler() {
     }
 
-
-
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
@@ -54,48 +44,29 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         FullHttpRequest request = (FullHttpRequest) msg;
         try {
-            proxyTaskPool.execute(() -> {
+            Future<byte[]> f = proxyTaskPool.submit(() -> {
+                ContextHolder.set(Context.of(ctx, request, null));
                 final List<String> endpoints = getEndpoints(request);
-                doPreFilters(preFilters, preAndPostFilters, request, ctx);
-                byte[] bytes = router.route(endpoints);
-                doPostFilters(postFilters, preAndPostFilters, bytes, request, ctx);
+                return router.route(endpoints);
             });
+            byte[] bytes = f.get();
+            writeAndFlush(ctx, request, bytes);
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } finally {
             ReferenceCountUtil.release(msg);
+            ContextHolder.remove();
         }
 
 
     }
 
-    private void doPostFilters(List<PostFilter> postFilters, List<PreAndPostFilter> preAndPostFilters, byte[] result, FullHttpRequest request, ChannelHandlerContext ctx) {
-        FullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(), HttpResponseStatus.OK,
-                Unpooled.wrappedBuffer(result));
-
-        for (PostFilter postFilter : postFilters)
-            postFilter.postFilter(response, ctx);
-
-        for (PreAndPostFilter filter : preAndPostFilters)
-            filter.postFilter(response, ctx);
 
 
-        writeAndFlush(ctx, request, response);
+    private void writeAndFlush(ChannelHandlerContext ctx, FullHttpRequest request, byte[] bytes) {
+        processResponse(ctx, request, bytes);
     }
 
-    private void writeAndFlush(ChannelHandlerContext ctx, FullHttpRequest request, FullHttpResponse response) {
-        processResponse(ctx, request, response.content().array());
-    }
-
-
-    private void doPreFilters(List<PreFilter> preFilters, List<PreAndPostFilter> preAndPostFilters, FullHttpRequest request, ChannelHandlerContext ctx) {
-        for (PreFilter preFilter : preFilters)
-            preFilter.preFilter(request, ctx);
-
-        for (PreAndPostFilter filter : preAndPostFilters)
-            filter.preFilter(request, ctx);
-
-    }
 
     private void processResponse(ChannelHandlerContext ctx, FullHttpRequest request, byte[] content) {
         final boolean keepAlive = HttpUtil.isKeepAlive(request);

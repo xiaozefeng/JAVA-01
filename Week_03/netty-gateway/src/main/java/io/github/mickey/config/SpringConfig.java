@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -18,11 +19,12 @@ import java.util.concurrent.TimeUnit;
 @ComponentScan("io.github.mickey")
 @Configuration
 @Slf4j
+@EnableAspectJAutoProxy
 public class SpringConfig {
 
     @Bean("proxyTaskPool")
     public ThreadPoolExecutor proxyTask() {
-        int cores = Runtime.getRuntime().availableProcessors() * 2;
+        int cores = Runtime.getRuntime().availableProcessors()* 2;
         long keepAliveTime = 1000L;
         int queueSize = 2048;
         RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
