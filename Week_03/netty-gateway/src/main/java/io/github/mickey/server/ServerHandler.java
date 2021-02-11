@@ -57,11 +57,9 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             proxyTaskPool.execute(() -> {
                 final List<String> endpoints = getEndpoints(request);
                 doPreFilters(preFilters, preAndPostFilters, request, ctx);
-                router.route(endpoints, bytes -> {
-                    doPostFilters(postFilters, preAndPostFilters, bytes, request, ctx);
-                });
+                byte[] bytes = router.route(endpoints);
+                doPostFilters(postFilters, preAndPostFilters, bytes, request, ctx);
             });
-
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         } finally {

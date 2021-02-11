@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
-import java.util.function.Consumer;
 
 @Component
 public class RandomHTTPEndpointRouter implements HTTPEndpointRouter {
@@ -16,10 +15,10 @@ public class RandomHTTPEndpointRouter implements HTTPEndpointRouter {
 
 
     @Override
-    public void route(List<String> endpoints, Consumer<byte[]> callback) {
+    public byte[] route(List<String> endpoints) {
         int len = endpoints.size();
         Random r = new Random();
         final int index = r.nextInt(len);
-        serviceHandler.handle(endpoints.get(index), callback);
+        return serviceHandler.handle(endpoints.get(index));
     }
 }

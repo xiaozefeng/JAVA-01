@@ -1,5 +1,6 @@
 package io.github.mickey.handler;
 
+import io.github.mickey.concurrent.GuardedObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -7,15 +8,16 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.function.Consumer;
+import java.util.Objects;
 
 @Slf4j
 @Component
 public class OkHTTPServiceHandler implements ServiceHandler {
 
     private OkHttpClient client;
+
+    private final GuardedObject<byte[]> guardedObject = new GuardedObject<>(3);
 
     public OkHTTPServiceHandler() {
     }
@@ -29,7 +31,7 @@ public class OkHTTPServiceHandler implements ServiceHandler {
     }
 
     @Override
-    public void handle(String url, Consumer<byte[]> callback) {
+    public byte[] handle(String url) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -45,11 +47,13 @@ public class OkHTTPServiceHandler implements ServiceHandler {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                 try (final ResponseBody body = response.body();) {
-                    final String content = body.string();
-                    log.info("response string:${}", content);
-                    callback.accept(content.getBytes(StandardCharsets.UTF_8));
+                    //final String content = body.string();
+                    //log.info("response string:${}", content);
+                    //callback.accept(content.getBytes(StandardCharsets.UTF_8));
+                    guardedObject.onDone(body.bytes());
                 }
             }
         });
+        return guardedObject.get(Objects::nonNull);
     }
 }
