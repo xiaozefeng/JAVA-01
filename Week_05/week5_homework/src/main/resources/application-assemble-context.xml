@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.2.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
+    <bean id="jack" class="io.github.mickey.week5.assemble.examples.bean.Employee">
+        <property name="name" value="jack"/>
+        <property name="salary" value="20000"/>
+    </bean>
+    <bean id="rose" class="io.github.mickey.week5.assemble.examples.bean.Employee">
+        <property name="salary" value="25000"/>
+        <property name="name" value="rose"/>
+    </bean>
+
+    <bean id="newbee" class="io.github.mickey.week5.assemble.examples.bean.Company">
+        <property name="name" value="newbee"/>
+        <property name="boss" ref="boss"/>
+        <property name="employees" >
+            <list>
+                <ref bean="jack"/>
+                <ref bean="rose"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="boss" class="io.github.mickey.week5.assemble.examples.bean.Boss">
+        <property name="name" value="lucy"/>
+        <property name="assets" value="50000000"/>
+    </bean>
+
+</beans>
