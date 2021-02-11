@@ -1,6 +1,6 @@
 package io.github.mickey.server;
 
-import io.github.mickey.config.ServiceConfig;
+import io.github.mickey.config.ServiceConfigLoader;
 import io.github.mickey.executor.ProxyServiceExecutor;
 import io.github.mickey.filter.both.PreAndPostFilter;
 import io.github.mickey.filter.both.TimeFilter;
@@ -77,13 +77,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         FullHttpRequest request = (FullHttpRequest) msg;
         try {
-            ProxyServiceExecutor.getExecutor().submit(() -> {
+            ProxyServiceExecutor.getExecutor().execute(() -> {
                 final List<String> endpoints = getEndpoints(request);
                 doPreFilters(preFilters, preAndPostFilters, request, ctx);
                 router.route(endpoints, bytes -> {
                     doPostFilters(postFilters, preAndPostFilters, bytes, request, ctx);
                 });
             });
+
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
         } finally {
             ReferenceCountUtil.release(msg);
         }
@@ -146,7 +149,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     private List<String> getEndpoints(FullHttpRequest request) {
         String serviceId = getServiceId(request);
-        List<String> urls = ServiceConfig.get(serviceId);
+        List<String> urls = ServiceConfigLoader.get(serviceId);
         log.info("proxy urls:${}, request uri:${}", urls, request.uri());
         urls = urls.stream().map(e -> e.concat(request.uri()))
                 .collect(Collectors.toList());

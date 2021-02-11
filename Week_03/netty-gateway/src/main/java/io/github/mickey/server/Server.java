@@ -27,21 +27,22 @@ public class Server {
         NioEventLoopGroup work = new NioEventLoopGroup();
 
         ServerBootstrap b = new ServerBootstrap();
-        b.option(ChannelOption.SO_BACKLOG, 1024)
-                .option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.SO_REUSEADDR, true)
-                .option(ChannelOption.SO_RCVBUF, 32 * 1024)
-                .option(ChannelOption.SO_SNDBUF, 32 * 1024)
-                .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childOption(EpollChannelOption.SO_REUSEPORT, true)
-                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+
 
         try {
             b.group(boos, work)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new ServerInitializer());
+            b.option(ChannelOption.SO_BACKLOG, 1024)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.SO_REUSEADDR, true)
+                    .option(ChannelOption.SO_RCVBUF, 32 * 1024)
+                    .option(ChannelOption.SO_SNDBUF, 32 * 1024)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childOption(EpollChannelOption.SO_REUSEPORT, true)
+                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
             final Channel c = b.bind(port).sync().channel();
             log.info("start netty server at "  + port);
