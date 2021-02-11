@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.2.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+    <bean id="student" class="io.github.mickey.week5.assemble.bean.Student">
+        <property name="name" value="jack"/>
+        <property name="age" value="18"/>
+        <property name="address" ref="address"/>
+    </bean>
+
+    <bean id="address" class="io.github.mickey.week5.assemble.bean.Address" >
+        <property name="province" value="湖南省"/>
+        <property name="city" value="娄底市"/>
+        <property name="region" value="涟源市茅塘镇"/>
+    </bean>
+</beans>
