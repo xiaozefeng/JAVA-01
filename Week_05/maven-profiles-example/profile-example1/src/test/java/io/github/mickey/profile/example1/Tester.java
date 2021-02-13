@@ -1,4 +1,4 @@
-package io.github.mickey;
+package io.github.mickey.profile.example1;
 
 import org.junit.Test;
 

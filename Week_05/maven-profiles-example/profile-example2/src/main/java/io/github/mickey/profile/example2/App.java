@@ -1,4 +1,4 @@
-package io.github.mickey;
+package io.github.mickey.profile.example2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,13 +6,13 @@ import java.util.Properties;
 
 /**
  * @author mickey
- * @date 2/12/21 23:20
+ * @date 2/13/21 10:24
  */
 public class App {
 
     public static void main(String[] args) {
         App app = new App();
-        Properties p = app.loadProperties("db.properties");
+        Properties p = app.loadProperties("config.properties");
         p.forEach((k, v) -> System.out.println("k:" + k + ",v:" + v));
     }
 
