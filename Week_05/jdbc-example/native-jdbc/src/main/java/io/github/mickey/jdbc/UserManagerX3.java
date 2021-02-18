@@ -74,8 +74,9 @@ public class UserManagerX3 {
 
     public User get(int id ) throws SQLException {
         assert connection != null;
-        final String sql = String.format("SELECT * FROM user WHERE id =%d", id);
+        final String sql = "SELECT * FROM user WHERE id =?";
         final PreparedStatement s = connection.prepareStatement(sql);
+        s.setInt(1,id );
         final ResultSet result = s.executeQuery(sql);
         User user = new User();
         if (result.next()) {
