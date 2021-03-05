@@ -11,8 +11,10 @@ public class ConnectionManager {
 
     private ConnectionManager(){}
 
+    private static final String path = System.getProperty("path", "db.properties");
+
     public static Connection getConnection() {
-        final InputStream is = ConnectionManager.class.getClassLoader().getResourceAsStream("db.properties");
+        final InputStream is = ConnectionManager.class.getClassLoader().getResourceAsStream(path);
         final Properties p = new Properties();
         try {
             p.load(is);

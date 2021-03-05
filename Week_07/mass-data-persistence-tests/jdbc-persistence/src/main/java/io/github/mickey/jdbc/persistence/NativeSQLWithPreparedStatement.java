@@ -8,16 +8,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class NativeSQLWithPreparedStatement {
+public class NativeSQLWithPreparedStatement implements UserRepository {
 
-    private final Connection connection;
+    private  Connection connection;
 
     public NativeSQLWithPreparedStatement(Connection connection) {
         this.connection = connection;
     }
 
+    public NativeSQLWithPreparedStatement() {
+    }
 
-    public void insertBatch(List<User> users) throws SQLException {
+    @Override
+    public void batchInsert(List<User> users) throws SQLException {
         String insertSQL = "insert into t_user (nickname, mobile, status,avatar, password,created_time, updated_time) values (?,?,?,?,?,now(),now())";
         PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
         int count = 20000;

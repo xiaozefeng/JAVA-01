@@ -8,16 +8,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-public class NativeSQLWithStatement {
+public class NativeSQLWithStatement implements UserRepository {
 
-    private final Connection connection;
+    private  Connection connection;
 
     public NativeSQLWithStatement(Connection connection) {
         this.connection = connection;
     }
 
+    public NativeSQLWithStatement() {
+    }
 
-    public void insertBatch(List<User> users) throws SQLException {
+    @Override
+    public void batchInsert(List<User> users) throws SQLException {
         Statement statement = connection.createStatement();
         String insertSQL = "insert into t_user (nickname, mobile, status,avatar, password,created_time, updated_time) values";
         int count = 20000;
@@ -33,7 +36,6 @@ public class NativeSQLWithStatement {
                         user.getPassword()));
             }
             sql.deleteCharAt(sql.length() - 1);
-            System.out.println(sql.toString());
             statement.addBatch(sql.toString());
             statement.executeBatch();
             statement.clearBatch();
