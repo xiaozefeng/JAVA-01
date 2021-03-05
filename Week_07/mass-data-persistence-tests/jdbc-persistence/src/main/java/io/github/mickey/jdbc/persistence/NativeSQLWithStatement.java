@@ -10,14 +10,12 @@ import java.util.List;
 
 public class NativeSQLWithStatement implements UserRepository {
 
-    private  Connection connection;
+    private final Connection connection;
 
     public NativeSQLWithStatement(Connection connection) {
         this.connection = connection;
     }
 
-    public NativeSQLWithStatement() {
-    }
 
     @Override
     public void batchInsert(List<User> users) throws SQLException {

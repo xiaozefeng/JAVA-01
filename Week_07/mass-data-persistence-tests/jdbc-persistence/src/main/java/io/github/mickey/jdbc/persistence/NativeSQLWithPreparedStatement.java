@@ -10,14 +10,13 @@ import java.util.List;
 
 public class NativeSQLWithPreparedStatement implements UserRepository {
 
-    private  Connection connection;
+    private  final Connection connection;
 
     public NativeSQLWithPreparedStatement(Connection connection) {
         this.connection = connection;
     }
 
-    public NativeSQLWithPreparedStatement() {
-    }
+
 
     @Override
     public void batchInsert(List<User> users) throws SQLException {
@@ -35,7 +34,7 @@ public class NativeSQLWithPreparedStatement implements UserRepository {
                 preparedStatement.setString(5, user.getPassword());
                 preparedStatement.addBatch();
             }
-            preparedStatement.executeBatch();
+            preparedStatement.executeLargeBatch();
             preparedStatement.clearBatch();
         }
 
