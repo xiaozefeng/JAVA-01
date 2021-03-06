@@ -6,6 +6,7 @@
     <modules>
         <module>dynamic-datasource-v1</module>
         <module>dynamic-datasource-v2</module>
+        <module>shardingsphrere-jdbc-v1</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
