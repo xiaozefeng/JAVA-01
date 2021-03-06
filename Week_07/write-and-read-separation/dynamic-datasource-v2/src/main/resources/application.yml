@@ -3,14 +3,14 @@ spring:
     name: data-multidatasource
   datasource:
     username: root
-    password: 1qaz@WSX
-    url: jdbc:mysql://127.0.0.1:3306/foo
+    password: 123456
+    url: jdbc:mysql://127.0.0.1:3386/foo
     driver-class-name: com.mysql.cj.jdbc.Driver
   second-datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 1qaz@WSX
-    url: jdbc:mysql://127.0.0.1:3306/bar
+    password: 123456
+    url: jdbc:mysql://127.0.0.1:3396/foo
 
 
 server:
