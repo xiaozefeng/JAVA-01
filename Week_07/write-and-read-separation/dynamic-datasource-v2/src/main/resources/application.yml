@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: data-multidatasource
+  datasource:
+    username: root
+    password: 1qaz@WSX
+    url: jdbc:mysql://127.0.0.1:3306/foo
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  second-datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1qaz@WSX
+    url: jdbc:mysql://127.0.0.1:3306/bar
+
+
+server:
+  port: 9090
