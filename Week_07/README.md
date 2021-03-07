@@ -1,141 +1,191 @@
-### **1.（选做）**用今天课上学习的知识，分析自己系统的 SQL 和表结构
+## 事务
 
-```mysql
--- user
-create table `t_user`(
-    `id` bigint unsigned not null auto_increment,
-    `nickname` varchar(64) not null ,
-    `mobile` char(11) not null ,
-    `status` tinyint unsigned not null default 1 comment '1:正常 0:禁用',
-    `avatar` varchar(128) default  null,
-    `password` varchar(32) not null comment '密码,md5加密',
-    `created_time` datetime not null,
-    `updated_time` datetime not null,
-    primary key (`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment 'user';
+- `Atomic` 原子性:  一个事物中多个`update/insert`操作，要么全部成功，要么全部失败
 
-create  table `t_user_address`(
-    `id` int unsigned not null auto_increment,
-    `user_id` bigint unsigned not null,
-    `province` char(4) not null,
-    `city` char(4) not null,
-    `region` char(4) not null,
-    `detail` varchar(256) not null comment '详细地址',
-    `tag` varchar(16) default  null comment '标签 如: home, company',
-    `created_time` datetime not null,
-    `updated_time` datetime not null,
-    primary key (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment 'user address';
+  每次 `insert/update`时会记录 `UNDO log`, 比如 `insert` 语句则会记录一条 对应的 `delete`操作 
 
+  在事务回滚时执行对应的`UNDO log`
 
-create table `t_category`(
-    `id` int unsigned not null auto_increment,
-    `parent_id` int unsigned default null comment '父级分类id',
-    `name` varchar(64) not null  comment '分类名称',
-    `created_time` datetime not null,
-    `updated_time` datetime not null,
-    primary key (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '类目';
+- `Consistency` 一致性
 
+- `Isolation` 隔离性: 不同的隔离级别有不同的数据可见性 
 
--- goods
-create table `t_goods` (
-    `id` bigint unsigned not null auto_increment,
-    `category_id` int unsigned not null comment '类目id',
-    `title` varchar(256) not null,
-    `desc` varchar(512) not null,
-    `image_url` varchar(512) not null,
-    `created_time` datetime not null,
-    `updated_time` datetime not null,
-    primary key (`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  comment 'goods';
+  - 读未提交   存在脏读，不可重复读，幻读
+  - 读已提交   存在 不可重复读，幻读
+  - 可重复读 存在幻读
+  - 串行化  解决了 脏读，不可重复读，幻读  (相当于加锁)
 
--- sku
-create table `t_goods_sku`(
-    `id` bigint unsigned not null auto_increment,
-    `goods_id` bigint unsigned not null ,
-    `stock` int unsigned  not null,
-    `price` int unsigned not null ,
-    `created_time` datetime not null,
-    `updated_time` datetime not null,
-    primary key (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment 'goods sku';
+  以上隔离级别: 从低到高，隔离级别越高存在的问题越少，但是并发性越低
 
--- order
-create table `t_order` (
-    `id` bigint unsigned not null auto_increment,
-    `order_no` varchar(32) not null,
-    `order_status` tinyint unsigned not null comment '0:已取消 1:已完成',
-    `pay_status` tinyint not null comment '0: 未支付 1:已经支付 2:已退款',
-    `fail_reason` varchar(64) default '' comment '失败原因',
-    `created_time` datetime not null,
-    `updated_time` datetime not null,
+  
 
-    primary key (`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment  'order';
-
-
--- order detail
-create table `t_order_detail`(
-    `id` bigint unsigned not null auto_increment,
-    `order_no` varchar(32) not null,
-    `goods_id` bigint unsigned not null,
-    `sku_id` bigint unsigned not null ,
-    `user_id` bigint unsigned not null,
-    `gods_title` varchar(256) not null,
-    `goods_desc` varchar(512) not null,
-    `goods_image` varchar(512) not null,
-    `goods_price` int unsigned  not null,
-    `created_time` datetime not null,
-    `updated_time` datetime not null,
-    primary key (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment 'order detail';
-```
-
-### **2.（必做）**按自己设计的表结构，插入 100 万订单模拟数据，测试不同方式的插入效率
-
-https://github.com/xiaozefeng/JAVA-01/blob/main/Week_07/mass-data-persistence-tests/jdbc-persistence/README.MD
-
-### **3.（选做）**按自己设计的表结构，插入 1000 万订单模拟数据，测试不同方式的插入效率
+- `Durability` 持久性: 事务提交成功后，数据不会丢失 -> `redolog`
 
 
 
-### **4.（选做）**使用不同的索引或组合，测试不同方式查询效率
+## 锁
 
-### **5.（选做）**调整测试数据，使得数据尽量均匀，模拟 1 年时间内的交易，计算一年的销售报表：销售总额，订单数，客单价，每月销售量，前十的商品等等（可以自己设计更多指标）
+#### 意向锁
 
-### **6.（选做）**尝试自己做一个 ID 生成器（可以模拟 Seq 或 Snowflake）
+表示事务稍后要进行哪种类型的锁定
 
-### **7.（选做）**尝试实现或改造一个非精确分页的程序
-
-
-
-### **1.（选做）**配置一遍异步复制，半同步复制、组复制
-
-做了一遍异步复制:  https://xiaozefeng.github.io/#/mysql/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6
-
-### **2.（必做）**读写分离 - 动态切换数据源版本 1.0
-
-#### 1.0版本
-
-https://github.com/xiaozefeng/JAVA-01/blob/main/Week_07/write-and-read-separation/dynamic-datasource-v1/README.MD
-
-#### 1.1版本
-
-https://github.com/xiaozefeng/JAVA-01/blob/main/Week_07/write-and-read-separation/dynamic-datasource-v2/pom.xml
-
-### **3.（必做）**读写分离 - 数据库框架版本 2.0
-
-#### 多数据源配置 + shardingsphere 读写分离
-
-https://github.com/xiaozefeng/JAVA-01/blob/main/Week_07/write-and-read-separation/shardingsphrere-jdbc-v1/pom.xml
+**意向锁的含义:** 在更高层级就拦截了其他的请求， 避免资源浪费 
 
 
 
-### **4.（选做）**读写分离 - 数据库中间件版本 3.0
+#### 排他锁 X锁
 
-### **5.（选做）**配置 MHA，模拟 master 宕机
+只有一个能写
 
-### **6.（选做）**配置 MGR，模拟 master 宕机
+#### 共享锁  S锁
 
-### **7.（选做）**配置 Orchestrator，模拟 master 宕机，演练 UI 调整拓扑结构
+可以多个读
+
+
+
+#### 行锁
+
+**记录锁 (Record)**: 始终锁定索引记录
+
+**间隙锁 (Gap)**: 锁定一个范围
+
+**临键锁 Next-Key**:  Recod Lock + Gap Lock , 可以锁定表中不存在的记录
+
+
+
+#### 死锁
+
+跟多线程的死锁是一样一样的
+
+- 互斥
+- 互相等待
+
+##### 如何解决？
+
+让其中一方放弃锁
+
+- MySQL 死锁检测 -> 但是需要消耗性能, 降低了吞吐量
+
+  
+
+**程序设计:**
+
+- 控制锁粒度
+- 避免长事务
+
+
+
+
+
+## MySQL优化
+
+### 设计优化
+
+设计字段尽量小，一个页可以存储更多的数据
+
+尽量避免使用 Blog, Clob , Text， 使用全文检索技术
+
+存储引擎上，没有特殊原因直接选 `InnoDB`
+
+
+
+### SQL优化
+
+##### 如何找到需要优化的SQL
+
+- 慢查询日志
+
+- 通过监控报警
+
+
+
+具体优化的点:
+
+- 注意隐式类型转换:  1. 数据不对 2. 不走索引
+
+- 避免是用 like '%%' -> 使用全文检索技术
+
+- 避免 `not` ,  `not int` `!=` -> 使用其他语法代替
+
+- 避免 `or` -> 使用 `union ` 或者 `union all`
+
+  
+
+  
+
+
+
+## Questions
+
+#### 幻读和不可重复读的差异？
+
+**不可重复读**: 在一个事务中，同一个查询语句多次执行看到的数据不一样
+
+**幻读:** 在一个事务中，同一个查询语句多次执行看到的 **结果集**不一样
+
+不可重复读强调的是一条记录**多次读取的值不一样**
+
+幻读多次读取**返回结果行数**不一样
+
+
+
+#### MySQL如何保证持久性?
+
+每次`insert/update`数据，数据不会马上写入磁盘，而是写入到`redolog`中，在需要时或者`redolog`写满了的情况，才会刷盘，这样做能提高写的性能。-> WAL技术 (Write Ahead Logging)
+
+如果出现 `MySQL`宕机，内存中的数据会丢失，但是由于写到了 `redolog` 中，mysql在重启时会检查redolog中哪些是已经提交事务的数据没有刷入磁盘，用这样的方式来做到数据的**持久性**。这种能力被称之为 `crash safe` 
+
+!> 值得注意的是，这种 `crash safe` 的能力是 `InnoDB` 是独有的，因为 `redolog` 是 `InnoDB` 独有的，其他存储引擎并没有用 `redolog`
+
+
+
+#### MySQL 默认级别？
+
+`MySQL` 默认隔离级别是 `RR` ，可重复读，我们之前提过 可重复读有幻读问题。
+
+##### 那MySQL中的 可重复复读有幻读问题吗？
+
+答案是没有幻读问题， `MySQL`中的 RR 实现跟标准实现不一样。
+
+通过`MVCC`机制解决了幻读问题。 
+
+
+
+#### 什么是 MVCC ？
+
+`Muti Version Concurrent Control` 多版本并发控制
+
+`快照读:` 在事务开启时会存一个快照, 在这个事务内，读取的数据都是基于这个快照，其他事务做的修改不会影响到这个结果。
+
+RR界别对读取到的记录加锁 (记录锁)，同时保证对读取的范围加锁，新的满足查询条件的记录不能够插入 (间隙锁)，必要时加 临键锁`Next-Key Lock`所以避免了**幻读现象**。
+
+https://github.com/Yhzhtk/note/issues/42
+
+
+
+
+
+#### 索引结构为什么选B+树
+
+最大的优点是: 因为 B+树 层级低，MySQL的数据存储在磁盘，每次磁盘的查询都比较慢，B+数层级低的话，就能用更少的 IO次数就能找到数据，这个很关键。
+
+
+
+
+
+#### 什么是回表？
+
+`聚集索引:` 跟数据存在一起，根据聚集索引可以直接找到数据
+
+`非聚集索引:`没有跟数据存在一起，而是存在的是 `主键` ，注意主键是 聚集索引
+
+**结论:** 一个非聚集索引的查询过程是, 先通过索引找到 主键，再通过主键查询到具体的数据， **第二次通过主键再查询数据的过程就被称之为回表**
+
+
+
+#### 为什么主键要单调递增?
+
+避免页分裂
+
+
+
