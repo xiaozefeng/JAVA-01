@@ -20,8 +20,6 @@ public class PreparedStatementRunner {
     private static final Integer batch = Integer.parseInt(System.getProperty("batch", "4"));
 
     public static void main(String[] args) throws SQLException, InterruptedException {
-        int total = 1000000;
-        int batch = 4;
         Connection[] connections = prepareConnection(batch);
         UserRepository[] userRepositories = prepareUserRepository(batch, connections);
         List<List<User>> data = prepareData(total, batch);

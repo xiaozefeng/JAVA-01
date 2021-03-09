@@ -11,7 +11,7 @@ public class ConnectionManager {
 
     private ConnectionManager(){}
 
-    private static final String path = System.getProperty("path", "db-local.properties");
+    private static final String path = System.getProperty("path", "db.properties");
 
     public static Connection getConnection() {
         final InputStream is = ConnectionManager.class.getClassLoader().getResourceAsStream(path);
