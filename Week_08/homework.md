@@ -128,7 +128,7 @@ rules:
 ```
 
 #### 3.代码
-
+https://github.com/xiaozefeng/JAVA-01/blob/main/Week_08/datasource-horizontal-expand/src/test/java/io/github/mickey/datasource/horizontal/expand/DatasourceHorizontalExpandApplicationTests.java
 
 
 
